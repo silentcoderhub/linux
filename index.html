@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linux Command Cheat Sheet</title>
+    <style>
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .category {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .category-title {
+            font-size: 1.5em;
+            color: #667eea;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .command-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+        }
+
+        .command-item {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .command-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-color: #667eea;
+        }
+
+        .command-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .command-code {
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            color: #2d3748;
+            font-weight: bold;
+            flex: 1;
+        }
+
+        .command-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: background 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #5568d3;
+        }
+
+        .btn.copied {
+            background: #48bb78;
+        }
+
+        .info-btn {
+            background: #4299e1;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            padding: 0;
+        }
+
+        .info-btn:hover {
+            background: #3182ce;
+        }
+
+        .command-desc {
+            color: #718096;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .modal-title {
+            font-size: 1.8em;
+            color: #667eea;
+            font-family: 'Courier New', monospace;
+        }
+
+        .close-btn {
+            background: #e53e3e;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover {
+            background: #c53030;
+        }
+
+        .modal-section {
+            margin-bottom: 20px;
+        }
+
+        .modal-section h3 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .modal-section p, .modal-section ul {
+            color: #4a5568;
+            line-height: 1.6;
+        }
+
+        .modal-section ul {
+            list-style-position: inside;
+            padding-left: 10px;
+        }
+
+        .modal-section li {
+            margin-bottom: 8px;
+        }
+
+        .usage-example {
+            background: #f7fafc;
+            padding: 12px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            border-left: 4px solid #667eea;
+            margin: 8px 0;
+        }
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            background: white;
+            border-radius: 20px;
+            margin-top: 40px;
+        }
+
+        .footer h3 {
+            color: #4ecdc4;
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+        }
+
+        .footer p {
+            margin: 10px 0;
+        }
+
+        .footer-meta {
+            margin-top: 20px;
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            .command-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🐧 Linux Command Cheat Sheet</h1>
+
+        <div class="category">
+            <h2 class="category-title">File & Directory Operations</h2>
+            <div class="command-grid">
+                <div class="command-item" data-command="ls">
+                    <div class="command-header">
+                        <span class="command-code">ls</span>
+                        <div class="command-actions">
+                            <button class="btn copy-btn">Copy</button>
+                            <button class="btn info-btn">i</button>
+                        </div>
+                    </div>
+                    <div class="command-desc">List directory contents</div>
+                </div>
+
+                <div class="command-item" data-command="cd">
+                    <div class="command-header">
+                        <span class="command-code">cd</span>
+                        <div class="command-actions">
+                            <button class="btn copy-btn">Copy</button>
+                            <button class="btn info-btn">i</button>
+                        </div>
+                    </div>
+                    <div class="command-desc">Change directory</div>
+                </div>
+
+                <div class="command-item" data-command="pwd">
+                    <div class="command-header">
+                        <span class="command-code">pwd</span>
+                        <div class="command-actions">
+                            <button class="btn copy-btn">Copy</button>
+                            <button class="btn info-btn">i</button>
+                        </div>
+                    </div>
+                    <div class="command-desc">Print working directory</div>
+                </div>
+
+                <div class="command-item" data-command="mkdir">
+                    <div class="command-header">
+                        <span class="command-code">mkdir</span>
+                        <div class="command-actions">
+                            <button class="btn copy-btn">Copy</button>
+                            <button class="btn info-btn">i</button>
+                        </div>
+                    </div>
+                    <div class="command-desc">Create new directory</div>
+                </div>
+
+                <div class="command-item" data-command="rm">
+                    <div class="command-header">
+                        <span class="command-code">rm</span>
+                        <div class="command-actions">
+                            <button class="btn copy-btn">Copy</button>
+                            <button class="btn info-btn">i</button>
+                        </div>
+                    </div>
+                    <div class="command-desc">Remove files or directories</div>
+                </div>
+
+                <div class="command-item" data-command="cp">
+                    <div class="command-header">
+                        <span class="command-code">cp</span>
+                        <div class="command-actions">
+                            <button class="btn copy-btn">Copy</button>
+                            <button class="btn info-btn">i</button>
+                        </div>
+                    </div>
+                    <div class="command-desc">Copy files or directories</div>
+                </div>
+
+                <div class="command-item" data-command="mv">
+                    <div class="command-header">
+                        <span class="command-code">mv</span>
+                        <div class="command-actions">
+                            <button class="btn copy-btn">Copy</button>
+                            <button class="btn info-btn">i</button>
+                        </div>
+                    </div>
+                    <div class="command-desc">Move or rename files</div>
+                </div>
+
+                <div class="command-item" data-command="touch">
+                    <div class="command-header">
+                        <span class="command-code">touch</span>
+                        <div class="command-actions">
+                            <button class="btn copy-btn">Copy</button>
+                            <button class="btn info-btn">i</button>
+                        </div>
+                    </div>
+                    <div class="command-desc">Create empty file</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="category">
+            <h2 class="category-title">File Viewing & Editing</h2>
+            <div class="command-grid">
+                <div class="command-item" data-command="cat">
+                    <div class="command-header">
+                        <span class="command-code">cat</span>
+                        <div class="command-actions">
+                            <button class="btn copy-btn">Copy</button>
+                            <button class="btn info-btn">i</button>
+                        </div>
+                    </div>
+                    <div class="command-desc">Display file contents</div>
+                </div>
+
+                <div class="command-item" data-command="less">
+                    <div class="command-header">
+                        <span class="command-code">less</span>
+                        <div class="command-actions">
+                            <button class="btn copy-btn">Copy</button>
+                            <button class="btn info-btn">i</button>
+                        </div>
+                    </div>
+                    <div class="command-desc">View file page by page</div>
+                </div>
+
+                <div class="command-item" data-command="head">
+                    <div class="command-header">
+                        <span class="command-code">head</span>
+                        <div class="command-actions">
+                            <button class="btn copy-btn">Copy</button>
+                            <button class="btn info-btn">i</button>
+                        </div>
+                    </div>
+                    <div class="command-desc">Show first lines of file</div>
+                </div>
+
+                <div class="command-item" data-command="tail">
+                    <div class="command-header">
+                        <span class="command-code">tail</span>
+                        <div class="command-actions">
+                            <button class="btn copy-btn">Copy</button>
+                            <button class="btn info-btn">i</button>
+                        </div>
+                    </div>
+                    <div class="command-desc">Show last lines of file</div>
+                </div>
+
+                <div class="command-item" data-command="nano">
+                    <div class="command-header">
+                        <span class="command-code">nano</span>
+                        <div class="command-actions">
+                            <button class="btn copy-btn">Copy</button>
+                            <button class="btn info-btn">i</button>
+                        </div>
+                    </div>
+                    <div class="command-desc">Simple text editor</div>
+                </div>
+
+                <div class="command-item" data-command="grep">
+                    <div class="command-header">
+                        <span class="command-code">grep</span>
+                        <div class="command-actions">
+                            <button class="btn copy-btn">Copy</button>
+                            <button class="btn info-btn">i</button>
+                        </div>
+                    </div>
+                    <div class="command-desc">Search text in files</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="category">
+            <h2 class="category-title">System Information</h2>
+            <div class="command-grid">
+                <div class="command-item" data-command="top">
+                    <div class="command-header">
+                        <span class="command-code">top</span>
+                        <div class="command-actions">
+                            <button class="btn copy-btn">Copy</button>
+                            <button class="btn info-btn">i</button>
+                        </div>
+                    </div>
+                    <div class="command-desc">Display system processes</div>
+                </div>
+
+                <div class="command-item" data-command="df">
+                    <div class="command-header">
+                        <span class="command-code">df</span>
+                        <div class="command-actions">
+                            <button class="btn copy-btn">Copy</button>
+                            <button class="btn info-btn">i</button>
+                        </div>
+                    </div>
+                    <div class="command-desc">Show disk space usage</div>
+                </div>
+
+                <div class="command-item" data-command="free">
+                    <div class="command-header">
+                        <span class="command-code">free</span>
+                        <div class="command-actions">
+                            <button class="btn copy-btn">Copy</button>
+                            <button class="btn info-btn">i</button>
+                        </div>
+                    </div>
+                    <div class="command-desc">Display memory usage</div>
+                </div>
+
+                <div class="command-item" data-command="uname">
+                    <div class="command-header">
+                        <span class="command-code">uname</span>
+                        <div class="command-actions">
+                            <button class="btn copy-btn">Copy</button>
+                            <button class="btn info-btn">i</button>
+                        </div>
+                    </div>
+                    <div class="command-desc">System information</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="category">
+            <h2 class="category-title">Permissions & Ownership</h2>
+            <div class="command-grid">
+                <div class="command-item" data-command="chmod">
+                    <div class="command-header">
+                        <span class="command-code">chmod</span>
+                        <div class="command-actions">
+                            <button class="btn copy-btn">Copy</button>
+                            <button class="btn info-btn">i</button>
+                        </div>
+                    </div>
+                    <div class="command-desc">Change file permissions</div>
+                </div>
+
+                <div class="command-item" data-command="chown">
+                    <div class="command-header">
+                        <span class="command-code">chown</span>
+                        <div class="command-actions">
+                            <button class="btn copy-btn">Copy</button>
+                            <button class="btn info-btn">i</button>
+                        </div>
+                    </div>
+                    <div class="command-desc">Change file owner</div>
+                </div>
+
+                <div class="command-item" data-command="sudo">
+                    <div class="command-header">
+                        <span class="command-code">sudo</span>
+                        <div class="command-actions">
+                            <button class="btn copy-btn">Copy</button>
+                            <button class="btn info-btn">i</button>
+                        </div>
+                    </div>
+                    <div class="command-desc">Execute as superuser</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle"></h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+    <footer class="footer">
+        <h3>Happy Coding! 🚀</h3>
+        <p>Crafted with ❤️ by <strong>Chinthaparthi Sridhar</strong> for the goodness of the technical society.</p>
+        
+        <div class="footer-meta">
+            <p>Special thanks and credits to official Git documentation and other supporting resources.</p>
+            <p>© 2025 All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // ✅ Your full database here — unchanged
+        const commands = [
+            // File System Commands
+            { category: 'filesystem', command: 'ls', description: 'List directory contents', syntax: 'ls [options] [directory]', examples: ['ls -la', 'ls /home/user'], info: 'Lists files and directories. -l shows long format, -a shows hidden files, -h shows human-readable sizes.' },
+            { category: 'filesystem', command: 'cd', description: 'Change directory', syntax: 'cd [directory]', examples: ['cd /home', 'cd ..', 'cd ~'], info: 'Changes the current working directory. ~ goes to home directory, .. goes up one level.' },
+            { category: 'filesystem', command: 'pwd', description: 'Print working directory', syntax: 'pwd', examples: ['pwd'], info: 'Displays the full path of the current working directory.' },
+            { category: 'filesystem', command: 'mkdir', description: 'Make directory', syntax: 'mkdir [options] directory_name', examples: ['mkdir new_folder', 'mkdir -p path/to/folder'], info: 'Creates new directories. -p creates parent directories as needed.' },
+            { category: 'filesystem', command: 'rmdir', description: 'Remove empty directory', syntax: 'rmdir directory_name', examples: ['rmdir empty_folder'], info: 'Removes empty directories only. Use rm -r for non-empty directories.' },
+            { category: 'filesystem', command: 'rm', description: 'Remove files/directories', syntax: 'rm [options] file', examples: ['rm file.txt', 'rm -r folder', 'rm -f file.txt'], info: 'Removes files and directories. -r for recursive, -f for force, -i for interactive.' },
+            { category: 'filesystem', command: 'cp', description: 'Copy files/directories', syntax: 'cp [options] source destination', examples: ['cp file.txt backup/', 'cp -r folder/ backup/'], info: 'Copies files and directories. -r for recursive, -p preserves permissions.' },
+            { category: 'filesystem', command: 'mv', description: 'Move/rename files', syntax: 'mv [options] source destination', examples: ['mv old.txt new.txt', 'mv file.txt /home/user/'], info: 'Moves or renames files and directories.' },
+            { category: 'filesystem', command: 'touch', description: 'Create empty file', syntax: 'touch filename', examples: ['touch newfile.txt', 'touch file1.txt file2.txt'], info: 'Creates empty files or updates timestamps.' },
+            { category: 'filesystem', command: 'find', description: 'Find files', syntax: 'find [path] [expression]', examples: ['find . -name "*.txt"', 'find / -size +100M'], info: 'Searches for files and directories. Powerful with various criteria.' },
+            { category: 'filesystem', command: 'locate', description: 'Find files by name', syntax: 'locate filename', examples: ['locate config.txt', 'locate -i "*.conf"'], info: 'Finds files by name using a prebuilt database. Faster than find.' },
+            { category: 'filesystem', command: 'du', description: 'Disk usage', syntax: 'du [options] [directory]', examples: ['du -h', 'du -sh *'], info: 'Shows disk space usage. -h for human-readable, -s for summary.' },
+            { category: 'filesystem', command: 'df', description: 'Disk free space', syntax: 'df [options]', examples: ['df -h', 'df -T'], info: 'Shows free disk space on mounted filesystems. -h for human-readable.' },
+            { category: 'filesystem', command: 'tree', description: 'Directory tree', syntax: 'tree [options] [directory]', examples: ['tree', 'tree -L 2', 'tree -d'], info: 'Displays directory structure in a tree format. -L limits depth, -d shows directories only.' },
+
+            // Process Management Commands
+            { category: 'process', command: 'ps', description: 'Process status', syntax: 'ps [options]', examples: ['ps aux', 'ps -ef', 'ps -u username'], info: 'Shows running processes. aux shows all processes, -ef shows full format.' },
+            { category: 'process', command: 'top', description: 'Process monitor', syntax: 'top [options]', examples: ['top', 'top -u username'], info: 'Interactive process viewer. Shows real-time system stats.' },
+            { category: 'process', command: 'htop', description: 'Enhanced process monitor', syntax: 'htop', examples: ['htop'], info: 'Interactive process viewer with better UI than top. May need installation.' },
+            { category: 'process', command: 'kill', description: 'Terminate process', syntax: 'kill [signal] PID', examples: ['kill 1234', 'kill -9 1234', 'killall process_name'], info: 'Sends signals to processes. SIGTERM (15) is default, SIGKILL (9) is force.' },
+            { category: 'process', command: 'killall', description: 'Kill by name', syntax: 'killall [options] process_name', examples: ['killall firefox', 'killall -9 process_name'], info: 'Kills processes by name instead of PID.' },
+            { category: 'process', command: 'jobs', description: 'List background jobs', syntax: 'jobs', examples: ['jobs', 'jobs -l'], info: 'Lists background jobs started in current shell.' },
+            { category: 'process', command: 'bg', description: 'Background job', syntax: 'bg [job_id]', examples: ['bg', 'bg %1'], info: 'Resumes a suspended job in background.' },
+            { category: 'process', command: 'fg', description: 'Foreground job', syntax: 'fg [job_id]', examples: ['fg', 'fg %1'], info: 'Brings a background job to foreground.' },
+            { category: 'process', command: 'nohup', description: 'Run immune to hangups', syntax: 'nohup command &', examples: ['nohup python script.py &'], info: 'Runs command immune to hangups, continues after logout.' },
+            { category: 'process', command: 'nice', description: 'Set process priority', syntax: 'nice -n value command', examples: ['nice -n 10 command', 'nice --10 command'], info: 'Sets process priority. -20 highest, 19 lowest. Default is 10.' },
+
+            // Network Commands
+            { category: 'network', command: 'ping', description: 'Test network connectivity', syntax: 'ping [options] host', examples: ['ping google.com', 'ping -c 4 192.168.1.1'], info: 'Tests connectivity to a host. -c sets count, -i sets interval.' },
+            { category: 'network', command: 'ip', description: 'Show network info', syntax: 'ip [options] object', examples: ['ip addr show', 'ip route show', 'ip link set eth0 up'], info: 'Modern network configuration tool. Replaces ifconfig.' },
+            { category: 'network', command: 'ifconfig', description: 'Network interface config', syntax: 'ifconfig [interface]', examples: ['ifconfig', 'ifconfig eth0'], info: 'Shows/configures network interfaces. Deprecated in favor of ip.' },
+            { category: 'network', command: 'netstat', description: 'Network statistics', syntax: 'netstat [options]', examples: ['netstat -tuln', 'netstat -anp'], info: 'Shows network connections. -t TCP, -u UDP, -l listening, -n numeric.' },
+            { category: 'network', command: 'ss', description: 'Socket statistics', syntax: 'ss [options]', examples: ['ss -tuln', 'ss -anp'], info: 'Modern replacement for netstat. Shows socket information.' },
+            { category: 'network', command: 'curl', description: 'Transfer data from URL', syntax: 'curl [options] URL', examples: ['curl https://example.com', 'curl -O file.txt'], info: 'Transfers data from/to server. Supports many protocols.' },
+            { category: 'network', command: 'wget', description: 'Download files', syntax: 'wget [options] URL', examples: ['wget https://example.com/file.zip', 'wget -r https://site.com/'], info: 'Downloads files from web. -r for recursive download.' },
+            { category: 'network', command: 'ssh', description: 'Secure shell', syntax: 'ssh [options] user@host', examples: ['ssh user@server.com', 'ssh -p 2222 user@host'], info: 'Connects to remote machine securely. -p specifies port.' },
+            { category: 'network', command: 'scp', description: 'Secure copy', syntax: 'scp [options] source destination', examples: ['scp file.txt user@host:/path/', 'scp -r folder/ user@host:/path/'], info: 'Securely copies files between hosts. -r for recursive.' },
+            { category: 'network', command: 'rsync', description: 'Sync files', syntax: 'rsync [options] source destination', examples: ['rsync -av src/ dest/', 'rsync -avz user@host:/src/ /dest/'], info: 'Efficiently syncs files. -a archive, -v verbose, -z compress.' },
+            { category: 'network', command: 'dig', description: 'DNS lookup', syntax: 'dig [options] domain', examples: ['dig google.com', 'dig MX google.com'], info: 'DNS lookup utility. Shows detailed DNS information.' },
+            { category: 'network', command: 'nslookup', description: 'DNS query', syntax: 'nslookup domain', examples: ['nslookup google.com', 'nslookup 8.8.8.8'], info: 'Queries DNS servers for domain information.' },
+            { category: 'network', command: 'traceroute', description: 'Trace network path', syntax: 'traceroute host', examples: ['traceroute google.com', 'traceroute -n 8.8.8.8'], info: 'Shows the route packets take to reach host.' },
+
+            // User Management Commands
+            { category: 'user', command: 'whoami', description: 'Current user', syntax: 'whoami', examples: ['whoami'], info: 'Displays the current username.' },
+            { category: 'user', command: 'id', description: 'User identity', syntax: 'id [username]', examples: ['id', 'id username'], info: 'Shows user and group IDs.' },
+            { category: 'user', command: 'sudo', description: 'Execute as root', syntax: 'sudo command', examples: ['sudo apt update', 'sudo -u user command'], info: 'Executes command with superuser privileges.' },
+            { category: 'user', command: 'su', description: 'Switch user', syntax: 'su [username]', examples: ['su', 'su - username'], info: 'Switches to another user. - for login shell.' },
+            { category: 'user', command: 'useradd', description: 'Add user', syntax: 'useradd [options] username', examples: ['useradd -m newuser', 'useradd -s /bin/bash user'], info: 'Creates a new user account. -m creates home directory.' },
+            { category: 'user', command: 'userdel', description: 'Delete user', syntax: 'userdel [options] username', examples: ['userdel username', 'userdel -r username'], info: 'Deletes a user account. -r removes home directory.' },
+            { category: 'user', command: 'passwd', description: 'Change password', syntax: 'passwd [username]', examples: ['passwd', 'passwd username'], info: 'Changes user password. Requires root for other users.' },
+            { category: 'user', command: 'groups', description: 'Show user groups', syntax: 'groups [username]', examples: ['groups', 'groups username'], info: 'Shows groups a user belongs to.' },
+            { category: 'user', command: 'adduser', description: 'Add user (interactive)', syntax: 'adduser username', examples: ['adduser newuser'], info: 'Interactive user creation with prompts.' },
+
+            // System Information Commands
+            { category: 'system', command: 'uname', description: 'System information', syntax: 'uname [options]', examples: ['uname -a', 'uname -r'], info: 'Shows system info. -a all, -r kernel release.' },
+            { category: 'system', command: 'uptime', description: 'System uptime', syntax: 'uptime', examples: ['uptime'], info: 'Shows how long system has been running and load average.' },
+            { category: 'system', command: 'free', description: 'Memory usage', syntax: 'free [options]', examples: ['free -h', 'free -m'], info: 'Shows memory usage. -h human-readable, -m megabytes.' },
+            { category: 'system', command: 'lscpu', description: 'CPU information', syntax: 'lscpu', examples: ['lscpu'], info: 'Displays CPU architecture information.' },
+            { category: 'system', command: 'lsblk', description: 'Block devices', syntax: 'lsblk [options]', examples: ['lsblk', 'lsblk -f'], info: 'Lists block devices. -f shows filesystem info.' },
+            { category: 'system', command: 'lsof', description: 'List open files', syntax: 'lsof [options]', examples: ['lsof', 'lsof -i :80', 'lsof /path/to/file'], info: 'Lists open files and processes using them.' },
+            { category: 'system', command: 'dmesg', description: 'Kernel messages', syntax: 'dmesg [options]', examples: ['dmesg', 'dmesg | tail'], info: 'Shows kernel ring buffer messages.' },
+            { category: 'system', command: 'systemctl', description: 'Systemd control', syntax: 'systemctl [command]', examples: ['systemctl status', 'systemctl start service', 'systemctl enable service'], info: 'Controls systemd services and units.' },
+            { category: 'system', command: 'service', description: 'Service control', syntax: 'service [service] [action]', examples: ['service nginx status', 'service mysql restart'], info: 'Controls system services (SysV init).' },
+            { category: 'system', command: 'journalctl', description: 'System logs', syntax: 'journalctl [options]', examples: ['journalctl -xe', 'journalctl -u service'], info: 'Views systemd journal logs.' },
+            { category: 'system', command: 'history', description: 'Command history', syntax: 'history', examples: ['history', 'history | grep command'], info: 'Shows command history.' },
+            { category: 'system', command: 'date', description: 'System date/time', syntax: 'date [options]', examples: ['date', 'date +"%Y-%m-%d"'], info: 'Shows or sets system date and time.' },
+
+            // Archive & Compression Commands
+            { category: 'archive', command: 'tar', description: 'Archive utility', syntax: 'tar [options] archive files', examples: ['tar -czf archive.tar.gz folder/', 'tar -xzf archive.tar.gz'], info: 'Creates/extracts archives. -c create, -x extract, -z gzip, -f file.' },
+            { category: 'archive', command: 'zip', description: 'Compress files', syntax: 'zip archive files', examples: ['zip archive.zip file1 file2', 'zip -r archive.zip folder/'], info: 'Creates ZIP archives. -r for recursive.' },
+            { category: 'archive', command: 'unzip', description: 'Extract ZIP', syntax: 'unzip archive', examples: ['unzip archive.zip', 'unzip -l archive.zip'], info: 'Extracts ZIP archives. -l lists contents.' },
+            { category: 'archive', command: 'gzip', description: 'Compress files', syntax: 'gzip [options] file', examples: ['gzip file.txt', 'gzip -d file.txt.gz'], info: 'Compresses files. -d decompresses.' },
+            { category: 'archive', command: 'gunzip', description: 'Decompress files', syntax: 'gunzip file.gz', examples: ['gunzip file.gz'], info: 'Decompresses gzip files.' },
+            { category: 'archive', command: 'bzip2', description: 'Compress with bzip2', syntax: 'bzip2 file', examples: ['bzip2 file.txt', 'bzip2 -d file.txt.bz2'], info: 'Compresses using bzip2 algorithm. Better compression than gzip.' },
+            { category: 'archive', command: '7z', description: '7-Zip utility', syntax: '7z [command] archive files', examples: ['7z a archive.7z folder/', '7z x archive.7z'], info: '7-Zip archiver with high compression ratio.' },
+
+            // Text Processing Commands
+            { category: 'text', command: 'cat', description: 'Concatenate files', syntax: 'cat [options] files', examples: ['cat file.txt', 'cat file1.txt file2.txt > combined.txt'], info: 'Displays file contents or concatenates files.' },
+            { category: 'text', command: 'less', description: 'View file content', syntax: 'less filename', examples: ['less file.txt'], info: 'Interactive file viewer. Use q to quit, / to search.' },
+            { category: 'text', command: 'more', description: 'View file content', syntax: 'more filename', examples: ['more file.txt'], info: 'File viewer with basic navigation.' },
+            { category: 'text', command: 'head', description: 'Show file beginning', syntax: 'head [options] file', examples: ['head file.txt', 'head -n 20 file.txt'], info: 'Shows first lines of file. -n specifies number of lines.' },
+            { category: 'text', command: 'tail', description: 'Show file end', syntax: 'tail [options] file', examples: ['tail file.txt', 'tail -f log.txt', 'tail -n 50 file.txt'], info: 'Shows last lines. -f follows file, -n specifies lines.' },
+            { category: 'text', command: 'grep', description: 'Search text', syntax: 'grep [options] pattern file', examples: ['grep "error" log.txt', 'grep -r "pattern" ./', 'grep -i "word" file.txt'], info: 'Searches for patterns in files. -i ignore case, -r recursive, -v invert.' },
+            { category: 'text', command: 'sed', description: 'Stream editor', syntax: 'sed [options] script file', examples: ['sed "s/old/new/g" file.txt', 'sed -i "s/text/TEXT/g" file.txt'], info: 'Text transformation utility. s for substitute, -i for in-place.' },
+            { category: 'text', command: 'awk', description: 'Pattern processor', syntax: 'awk "pattern {action}" file', examples: ['awk "{print $1}" file.txt', 'awk -F: "{print $1}" /etc/passwd'], info: 'Pattern scanning and processing language.' },
+            { category: 'text', command: 'sort', description: 'Sort lines', syntax: 'sort [options] file', examples: ['sort file.txt', 'sort -n numbers.txt', 'sort -r file.txt'], info: 'Sorts lines of text. -n numeric, -r reverse, -u unique.' },
+            { category: 'text', command: 'uniq', description: 'Unique lines', syntax: 'uniq [options] file', examples: ['uniq file.txt', 'uniq -c file.txt'], info: 'Removes duplicate adjacent lines. -c counts occurrences.' },
+            { category: 'text', command: 'wc', description: 'Word count', syntax: 'wc [options] file', examples: ['wc file.txt', 'wc -l file.txt', 'wc -w file.txt'], info: 'Counts lines, words, and characters. -l lines, -w words, -c characters.' },
+            { category: 'text', command: 'cut', description: 'Extract columns', syntax: 'cut [options] file', examples: ['cut -d: -f1 /etc/passwd', 'cut -c1-10 file.txt'], info: 'Extracts columns from delimited files. -d delimiter, -f field.' },
+            { category: 'text', command: 'tr', description: 'Translate characters', syntax: 'tr "set1" "set2"', examples: ['tr "a-z" "A-Z"', 'tr -d " "'], info: 'Translates or deletes characters. -d deletes characters.' },
+            { category: 'text', command: 'echo', description: 'Display text', syntax: 'echo [text]', examples: ['echo "Hello World"', 'echo $PATH'], info: 'Displays text or variable values.' },
+
+            // Permission Commands
+            { category: 'permission', command: 'chmod', description: 'Change permissions', syntax: 'chmod [options] mode file', examples: ['chmod 755 script.sh', 'chmod +x file', 'chmod u+w file.txt'], info: 'Changes file permissions. Octal or symbolic notation.' },
+            { category: 'permission', command: 'chown', description: 'Change owner', syntax: 'chown [options] owner[:group] file', examples: ['chown user file.txt', 'chown user:group file.txt', 'chown -R user /path/'], info: 'Changes file owner and group. -R for recursive.' },
+            { category: 'permission', command: 'chgrp', description: 'Change group', syntax: 'chgrp [options] group file', examples: ['chgrp users file.txt', 'chgrp -R group /path/'], info: 'Changes file group ownership. -R for recursive.' },
+            { category: 'permission', command: 'umask', description: 'Set default permissions', syntax: 'umask [mode]', examples: ['umask', 'umask 022'], info: 'Sets default file permissions for new files.' }
+        ];
+        const container = document.querySelector(".container");
+
+        // ✅ Category Display Names
+        const categoryNames = {
+            filesystem: "File & Directory Operations",
+            process: "Process Management",
+            network: "Networking Commands",
+            user: "User & Account Management",
+            system: "System Information & Monitoring",
+            archive: "Archive & Compression",
+            text: "Text Processing & Filtering",
+            permission: "Permissions & Ownership"
+        };
+
+        // ✅ Convert DB into modal-friendly dictionary
+        const commandInfo = {};
+        commands.forEach(cmd => {
+            commandInfo[cmd.command] = {
+                description: cmd.description,
+                usage: [cmd.syntax],   // usage section shows syntax
+                examples: cmd.examples,
+                info: cmd.info
+            };
+        });
+
+        // ✅ Group commands by category for UI generation
+        const grouped = {};
+        commands.forEach(cmd => {
+            if (!grouped[cmd.category]) grouped[cmd.category] = [];
+            grouped[cmd.category].push(cmd);
+        });
+
+        // ✅ Clear existing static cheat sheet
+        document.querySelectorAll(".category").forEach(e => e.remove());
+
+        // ✅ Build cheat sheet UI dynamically
+        Object.keys(grouped).forEach(category => {
+            const section = document.createElement("div");
+            section.className = "category";
+
+            section.innerHTML = `
+                <h2 class="category-title">${categoryNames[category] || category}</h2>
+                <div class="command-grid">
+                    ${grouped[category].map(cmd => `
+                        <div class="command-item" data-command="${cmd.command}">
+                            <div class="command-header">
+                                <span class="command-code">${cmd.command}</span>
+                                <div class="command-actions">
+                                    <button class="btn copy-btn">Copy</button>
+                                    <button class="btn info-btn">i</button>
+                                </div>
+                            </div>
+                            <div class="command-desc">${cmd.description}</div>
+                        </div>
+                    `).join("")}
+                </div>
+            `;
+
+            container.appendChild(section);
+        });
+
+        // ✅ Copy button
+        document.addEventListener("click", e => {
+            if (!e.target.classList.contains("copy-btn")) return;
+            const box = e.target.closest(".command-item");
+            const cmd = box.dataset.command;
+
+            navigator.clipboard.writeText(cmd).then(() => {
+                e.target.textContent = "Copied!";
+                e.target.classList.add("copied");
+                setTimeout(() => {
+                    e.target.textContent = "Copy";
+                    e.target.classList.remove("copied");
+                }, 2000);
+            });
+        });
+
+        // ✅ Modal logic
+        const modal = document.getElementById("modal");
+        const modalTitle = document.getElementById("modalTitle");
+        const modalBody = document.getElementById("modalBody");
+        const closeBtn = document.querySelector(".close-btn");
+
+        document.addEventListener("click", e => {
+            if (!e.target.classList.contains("info-btn")) return;
+
+            const box = e.target.closest(".command-item");
+            const cmd = box.dataset.command;
+            const info = commandInfo[cmd];
+
+            modalTitle.textContent = cmd;
+
+            modalBody.innerHTML = `
+                <div class="modal-section">
+                    <h3>Description</h3>
+                    <p>${info.description}</p>
+                </div>
+
+                <div class="modal-section">
+                    <h3>Syntax</h3>
+                    <div class="usage-example">${info.usage[0]}</div>
+                </div>
+
+                <div class="modal-section">
+                    <h3>Examples</h3>
+                    ${info.examples.map(ex => `<div class="usage-example">${ex}</div>`).join("")}
+                </div>
+
+                <div class="modal-section">
+                    <h3>Additional Info</h3>
+                    <p>${info.info}</p>
+                </div>
+            `;
+
+            modal.classList.add("active");
+        });
+
+        closeBtn.addEventListener("click", () => modal.classList.remove("active"));
+        modal.addEventListener("click", e => { if (e.target === modal) modal.classList.remove("active"); });
+        document.addEventListener("keydown", e => { if (e.key === "Escape") modal.classList.remove("active"); });
+    </script>
+
+</body>
+</html>
