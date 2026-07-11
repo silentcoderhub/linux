@@ -1,72 +1,497 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Linux Command Cheat Sheet</title>
+    <title>SilentCoderHub · Linux Command Cheat Sheet</title>
+    
+    <!-- Meta tags -->
+    <meta name="description" content="Linux command reference and interactive cheat sheet. Curated for developers who build quietly and ship loudly." />
+    <meta name="keywords" content="linux, command line, cheat sheet, bash, developer resources, SilentCoderHub" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- External CDNs only (No local assets) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+
+    <!-- Standalone Compiled CSS Block -->
     <style>
-        
-        * {
+        /* ── Core Design System (Base & Layout) ───────────────── */
+        :root {
+            /* Color Palette - Light Mode */
+            --primary-color: #22C55E;
+            --primary-hover: #16A34A;
+            --primary-glow: rgba(34, 197, 94, 0.15);
+            
+            --bg-color: #F8FAFC;
+            --card-bg: #FFFFFF;
+            --text-primary: #0F172A;
+            --text-secondary: #334155;
+            --text-muted: #64748B;
+            
+            --border-color: #E2E8F0;
+            --border-hover: #CBD5E1;
+            
+            --navbar-bg: rgba(248, 250, 252, 0.8);
+            --footer-bg: #0F172A;
+            --footer-text: #E2E8F0;
+            --footer-text-muted: #94A3B8;
+            
+            /* Layout Tokens */
+            --font-primary: 'Inter', sans-serif;
+            --font-heading: 'Space Grotesk', sans-serif;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+            --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.05), 0 4px 6px -2px rgba(15, 23, 42, 0.02);
+            --shadow-glow: 0 0 20px rgba(34, 197, 94, 0.2);
+            
+            --transition-fast: 0.2s ease;
+            --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        html[data-theme="dark"] {
+            /* Color Palette - Dark Mode Overrides */
+            --bg-color: #0F172A;
+            --card-bg: #1E293B;
+            --text-primary: #F8FAFC;
+            --text-secondary: #E2E8F0;
+            --text-muted: #94A3B8;
+            
+            --border-color: #334155;
+            --border-hover: #475569;
+            
+            --navbar-bg: rgba(15, 23, 42, 0.85);
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.2);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.3), 0 2px 4px -1px rgba(0,0,0,0.2);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+            --shadow-glow: 0 0 25px rgba(34, 197, 94, 0.15);
+            
+            --primary-glow: rgba(34, 197, 94, 0.12);
+        }
+
+        /* Base Resets */
+        *, *::before, *::after {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
+            font-family: var(--font-primary);
+            background-color: var(--bg-color);
+            color: var(--text-secondary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            transition: background-color var(--transition-normal), color var(--transition-normal);
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
+        /* Custom Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
         }
 
-        h1 {
-            text-align: center;
-            color: white;
-            margin-bottom: 30px;
-            font-size: 2.5em;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        ::-webkit-scrollbar-track {
+            background: var(--bg-color);
         }
 
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-hover);
+            border-radius: var(--radius-sm);
+            border: 2px solid var(--bg-color);
+        }
+
+        html[data-theme="dark"] ::-webkit-scrollbar-track {
+            background: #0F172A;
+        }
+
+        html[data-theme="dark"] ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border: 2px solid #0F172A;
+        }
+
+        /* Scroll progress bar top */
+        #scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-color), #4ADE80);
+            z-index: 9999;
+            transition: width 0.1s ease-out;
+        }
+
+        /* Header Navigation Bar */
+        .navbar-custom {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1050;
+            background-color: var(--navbar-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+            transition: padding var(--transition-normal), background-color var(--transition-normal), border-color var(--transition-normal);
+        }
+
+        .navbar-custom.navbar-scrolled {
+            padding: 0.6rem 0;
+            box-shadow: var(--shadow-md);
+        }
+
+        .navbar-brand-img {
+            height: 52px;
+            width: auto;
+            object-fit: contain;
+            transition: height var(--transition-normal);
+            margin-left: -30px; 
+        }
+
+        .navbar-custom.navbar-scrolled .navbar-brand-img {
+            height: 40px;
+        }
+
+        html[data-theme="dark"] .navbar-brand-img,
+        html[data-theme="dark"] .footer-brand-img {
+            filter: invert(1) hue-rotate(180deg);
+        }
+
+        .navbar-nav .nav-link {
+            font-family: var(--font-primary);
+            font-weight: 500;
+            color: var(--text-secondary);
+            padding: 0.5rem 1rem !important;
+            border-radius: var(--radius-sm);
+            transition: all var(--transition-fast);
+        }
+
+        .navbar-nav .nav-link:hover,
+        .navbar-nav .nav-link.active {
+            color: var(--primary-color);
+            background-color: var(--primary-glow);
+        }
+
+        .navbar-toggler-icon-custom {
+            color: var(--text-primary);
+            font-size: 1.25rem;
+        }
+
+        .navbar-custom .navbar-toggler-icon {
+            background-image: none !important;
+            width: auto !important;
+            height: auto !important;
+            display: inline-flex !important;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Theme Switcher Toggle styling */
+        .theme-toggle-btn {
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+        }
+
+        .theme-toggle-btn:hover {
+            background-color: var(--primary-glow);
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .theme-toggle-btn .fa-sun {
+            display: none;
+        }
+
+        .theme-toggle-btn .fa-moon {
+            display: block;
+        }
+
+        html[data-theme="dark"] .theme-toggle-btn .fa-sun {
+            display: block;
+            color: #FBBF24;
+        }
+
+        html[data-theme="dark"] .theme-toggle-btn .fa-moon {
+            display: none;
+        }
+
+        /* Page Banner */
+        .page-banner {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.8)), url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="1" fill="%2322C55E" opacity="0.3"/></svg>') repeat;
+            color: #FFFFFF;
+            padding: 3rem 0 1rem 0;
+            position: relative;
+            border-bottom: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        .page-banner h1 {
+            color: #FFFFFF !important;
+            font-size: 2.75rem;
+            font-weight: 800;
+            margin-bottom: 0.75rem;
+            font-family: var(--font-heading);
+        }
+
+        .page-banner-sub {
+            font-size: 1.1rem;
+            color: #94A3B8 !important;
+            max-width: 700px;
+        }
+
+        .breadcrumb-custom {
+            display: flex;
+            gap: 0.5rem;
+            list-style: none;
+            padding-left: 0;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #64748B !important;
+        }
+
+        .breadcrumb-custom a {
+            color: var(--primary-color) !important;
+        }
+
+        .breadcrumb-custom li:not(:last-child)::after {
+            content: '/';
+            margin-left: 0.5rem;
+            color: #64748B !important;
+        }
+
+        @media (max-width: 767.98px) {
+            .page-banner {
+                padding: 7rem 0 3rem 0;
+            }
+            .page-banner h1 {
+                font-size: 2rem;
+            }
+            .navbar-brand-img {
+                height: 44px;
+            }
+        }
+
+        /* Footer Section Styles */
+        .footer-custom {
+            background-color: var(--footer-bg);
+            color: var(--footer-text);
+            padding: 5rem 0 2rem 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+        }
+
+        .footer-brand-img {
+            height: 48px;
+            width: auto;
+            object-fit: contain;
+            margin-bottom: 1.25rem;
+            transition: transform var(--transition-fast);
+            filter: invert(1) hue-rotate(180deg);
+        }
+
+        .footer-tagline {
+            color: var(--footer-text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            max-width: 320px;
+        }
+
+        .footer-title {
+            font-family: var(--font-heading);
+            font-size: 1.1rem;
+            color: #FFFFFF !important;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .footer-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 30px;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+
+        .footer-links {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-contact-info {
+            color: var(--footer-text-muted);
+            font-size: 0.95rem;
+        }
+
+        .footer-contact-info i {
+            color: var(--primary-color);
+            width: 24px;
+        }
+
+        .footer-social-icons {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .footer-social-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            border-radius: var(--radius-md);
+            background-color: rgba(255, 255, 255, 0.05);
+            color: #FFFFFF !important;
+            transition: all var(--transition-fast);
+        }
+
+        .footer-social-icon:hover {
+            background-color: var(--primary-color);
+            color: #FFFFFF !important;
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 2rem;
+            margin-top: 3rem;
+            font-size: 0.9rem;
+            color: var(--footer-text-muted);
+        }
+
+        .footer-custom p,
+        .footer-custom li,
+        .footer-custom span,
+        .footer-custom div,
+        .footer-custom .text-muted {
+            color: var(--footer-text-muted) !important;
+        }
+
+        .footer-custom a {
+            color: var(--footer-text-muted) !important;
+            text-decoration: none;
+            transition: all var(--transition-fast);
+        }
+
+        .footer-custom a:hover {
+            color: var(--primary-color) !important;
+        }
+
+        /* Back To Top Button */
+        .back-to-top {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            z-index: 1000;
+            width: 45px;
+            height: 45px;
+            background-color: var(--primary-color);
+            color: #FFFFFF;
+            border: none;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            box-shadow: 0 4px 10px rgba(34, 197, 94, 0.3);
+            transition: all var(--transition-normal);
+        }
+
+        .back-to-top.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-3px);
+            color: #FFFFFF;
+        }
+
+        /* ── Custom Cheat Sheet Styles ────────────────────────── */
         .category {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem;
+            margin-bottom: 2.25rem;
+            box-shadow: var(--shadow-md);
+            transition: background-color var(--transition-normal), border-color var(--transition-normal);
         }
 
         .category-title {
-            font-size: 1.5em;
-            color: #667eea;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #667eea;
+            font-family: var(--font-heading);
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--primary-color);
         }
 
         .command-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.25rem;
         }
 
         .command-item {
-            background: #f8f9fa;
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
-            padding: 15px;
+            background: rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
             position: relative;
-            transition: all 0.3s ease;
+            transition: all var(--transition-fast);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 120px;
+        }
+
+        html[data-theme="light"] .command-item {
+            background: #f8fafc;
         }
 
         .command-item:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            border-color: #667eea;
+            box-shadow: var(--shadow-sm);
+            border-color: var(--primary-color);
+            background-color: var(--primary-glow);
         }
 
         .command-header {
@@ -74,189 +499,114 @@
             align-items: center;
             justify-content: space-between;
             margin-bottom: 8px;
+            gap: 10px;
         }
 
         .command-code {
-            font-family: 'Courier New', monospace;
-            font-size: 1.1em;
-            color: #2d3748;
-            font-weight: bold;
-            flex: 1;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.05rem;
+            color: var(--text-primary);
+            font-weight: 600;
+            word-break: break-all;
         }
 
         .command-actions {
             display: flex;
             gap: 8px;
+            flex-shrink: 0;
         }
 
-        .btn {
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 5px;
+        .btn-action {
+            background-color: var(--primary-color);
+            color: #ffffff !important;
+            border: 1px solid var(--primary-color);
+            padding: 4px 10px;
+            border-radius: var(--radius-sm);
             cursor: pointer;
-            font-size: 0.85em;
-            transition: background 0.3s ease;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all var(--transition-fast);
+            font-family: var(--font-heading);
         }
 
-        .btn:hover {
-            background: #5568d3;
+        .btn-action:hover {
+            background-color: var(--primary-hover);
+            border-color: var(--primary-hover);
+            transform: translateY(-1px);
         }
 
-        .btn.copied {
-            background: #48bb78;
+        .btn-action.copied {
+            background-color: #10b981;
+            border-color: #10b981;
         }
 
-        .info-btn {
-            background: #4299e1;
-            width: 24px;
-            height: 24px;
+        .btn-info-action {
+            background-color: #3b82f6;
+            border-color: #3b82f6;
+            color: white !important;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
+            font-size: 0.8rem;
             padding: 0;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            border: 1px solid #3b82f6;
         }
 
-        .info-btn:hover {
-            background: #3182ce;
+        .btn-info-action:hover {
+            background-color: #2563eb;
+            border-color: #2563eb;
+            transform: translateY(-1px);
         }
 
         .command-desc {
-            color: #718096;
-            font-size: 0.9em;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
             margin-top: 5px;
+            line-height: 1.4;
         }
 
-        .modal {
+        /* Modal custom styling */
+        .modal-custom {
             display: none;
             position: fixed;
-            z-index: 1000;
+            z-index: 2000;
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.6);
-            animation: fadeIn 0.3s ease;
-        }
-
-        .modal.active {
-            display: flex;
+            background-color: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
             align-items: center;
             justify-content: center;
         }
 
-        .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
+        .modal-custom.active {
+            display: flex;
+        }
+
+        .modal-content-custom {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            border-radius: var(--radius-lg);
             max-width: 600px;
             width: 90%;
             max-height: 80vh;
             overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            animation: slideUp 0.3s ease;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #e9ecef;
-        }
-
-        .modal-title {
-            font-size: 1.8em;
-            color: #667eea;
-            font-family: 'Courier New', monospace;
-        }
-
-        .close-btn {
-            background: #e53e3e;
-            color: white;
-            border: none;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.2em;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .close-btn:hover {
-            background: #c53030;
-        }
-
-        .modal-section {
-            margin-bottom: 20px;
-        }
-
-        .modal-section h3 {
-            color: #2d3748;
-            margin-bottom: 10px;
-            font-size: 1.2em;
-        }
-
-        .modal-section p, .modal-section ul {
-            color: #4a5568;
-            line-height: 1.6;
-        }
-
-        .modal-section ul {
-            list-style-position: inside;
-            padding-left: 10px;
-        }
-
-        .modal-section li {
-            margin-bottom: 8px;
-        }
-
-        .usage-example {
-            background: #f7fafc;
-            padding: 12px;
-            border-radius: 6px;
-            font-family: 'Courier New', monospace;
-            border-left: 4px solid #667eea;
-            margin: 8px 0;
-        }
-        .footer {
-            text-align: center;
-            padding: 40px 20px;
-            background: white;
-            border-radius: 20px;
-            margin-top: 40px;
-        }
-
-        .footer h3 {
-            color: #4ecdc4;
-            margin-bottom: 15px;
-            font-size: 1.8rem;
-        }
-
-        .footer p {
-            margin: 10px 0;
-        }
-
-        .footer-meta {
-            margin-top: 20px;
-            opacity: 0.7;
-            font-size: 0.9rem;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            box-shadow: var(--shadow-lg);
+            animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
         }
 
         @keyframes slideUp {
             from {
-                transform: translateY(50px);
+                transform: translateY(20px);
                 opacity: 0;
             }
             to {
@@ -265,14 +615,91 @@
             }
         }
 
+        .modal-header-custom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-title-custom {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            font-family: 'JetBrains Mono', monospace;
+            margin: 0;
+        }
+
+        .close-btn-custom {
+            background: #ef4444;
+            color: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color var(--transition-fast);
+        }
+
+        .close-btn-custom:hover {
+            background-color: #dc2626;
+        }
+
+        .modal-section-custom {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-section-custom h3 {
+            font-family: var(--font-heading);
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .modal-section-custom p, .modal-section-custom ul {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .modal-section-custom ul {
+            list-style-position: inside;
+            padding-left: 5px;
+        }
+
+        .modal-section-custom li {
+            margin-bottom: 6px;
+        }
+
+        .usage-example-custom {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            border-left: 4px solid var(--primary-color);
+            margin: 6px 0;
+            word-break: break-all;
+        }
+
+        html[data-theme="light"] .usage-example-custom {
+            background: #f1f5f9;
+        }
+
         @media (max-width: 768px) {
-            h1 {
-                font-size: 1.8em;
-            }
             .command-grid {
                 grid-template-columns: 1fr;
             }
         }
+
         @media print {
             body::before {
                 content: "chinthaparthisridhar.in © 2025";
@@ -281,292 +708,250 @@
                 left: 50%;
                 transform: translate(-50%, -50%) rotate(-35deg);
                 font-size: 60px;
-                color: rgba(0, 0, 0, 0.15);  /* light watermark */
+                color: rgba(0, 0, 0, 0.08);
                 font-weight: 700;
                 white-space: nowrap;
                 z-index: 9999;
                 pointer-events: none;
             }
         }
-
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🐧 Linux Command Cheat Sheet</h1>
 
-        <div class="category">
-            <h2 class="category-title">File & Directory Operations</h2>
-            <div class="command-grid">
-                <div class="command-item" data-command="ls">
-                    <div class="command-header">
-                        <span class="command-code">ls</span>
-                        <div class="command-actions">
-                            <button class="btn copy-btn">Copy</button>
-                            <button class="btn info-btn">i</button>
-                        </div>
-                    </div>
-                    <div class="command-desc">List directory contents</div>
-                </div>
+    <div id="scroll-progress"></div>
 
-                <div class="command-item" data-command="cd">
-                    <div class="command-header">
-                        <span class="command-code">cd</span>
-                        <div class="command-actions">
-                            <button class="btn copy-btn">Copy</button>
-                            <button class="btn info-btn">i</button>
-                        </div>
-                    </div>
-                    <div class="command-desc">Change directory</div>
-                </div>
-
-                <div class="command-item" data-command="pwd">
-                    <div class="command-header">
-                        <span class="command-code">pwd</span>
-                        <div class="command-actions">
-                            <button class="btn copy-btn">Copy</button>
-                            <button class="btn info-btn">i</button>
-                        </div>
-                    </div>
-                    <div class="command-desc">Print working directory</div>
-                </div>
-
-                <div class="command-item" data-command="mkdir">
-                    <div class="command-header">
-                        <span class="command-code">mkdir</span>
-                        <div class="command-actions">
-                            <button class="btn copy-btn">Copy</button>
-                            <button class="btn info-btn">i</button>
-                        </div>
-                    </div>
-                    <div class="command-desc">Create new directory</div>
-                </div>
-
-                <div class="command-item" data-command="rm">
-                    <div class="command-header">
-                        <span class="command-code">rm</span>
-                        <div class="command-actions">
-                            <button class="btn copy-btn">Copy</button>
-                            <button class="btn info-btn">i</button>
-                        </div>
-                    </div>
-                    <div class="command-desc">Remove files or directories</div>
-                </div>
-
-                <div class="command-item" data-command="cp">
-                    <div class="command-header">
-                        <span class="command-code">cp</span>
-                        <div class="command-actions">
-                            <button class="btn copy-btn">Copy</button>
-                            <button class="btn info-btn">i</button>
-                        </div>
-                    </div>
-                    <div class="command-desc">Copy files or directories</div>
-                </div>
-
-                <div class="command-item" data-command="mv">
-                    <div class="command-header">
-                        <span class="command-code">mv</span>
-                        <div class="command-actions">
-                            <button class="btn copy-btn">Copy</button>
-                            <button class="btn info-btn">i</button>
-                        </div>
-                    </div>
-                    <div class="command-desc">Move or rename files</div>
-                </div>
-
-                <div class="command-item" data-command="touch">
-                    <div class="command-header">
-                        <span class="command-code">touch</span>
-                        <div class="command-actions">
-                            <button class="btn copy-btn">Copy</button>
-                            <button class="btn info-btn">i</button>
-                        </div>
-                    </div>
-                    <div class="command-desc">Create empty file</div>
-                </div>
+    <!-- Navigation Header -->
+    <nav class="navbar navbar-expand-lg navbar-custom" id="main-navbar">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <img src="image.png" alt="SilentCoderHub Logo" class="navbar-brand-img">
+            </a>
+            <div class="d-flex align-items-center gap-2 order-lg-last">
+                <!-- Theme Switcher Toggle -->
+                <button id="theme-toggle" type="button" class="theme-toggle-btn" aria-label="Toggle light or dark theme" title="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                    <i class="fas fa-sun"></i>
+                </button>
+                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"><i class="fas fa-bars navbar-toggler-icon-custom"></i></span>
+                </button>
+            </div>
+            <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+                <ul class="navbar-nav gap-1 mt-3 mt-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="aboutDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">About</a>
+                        <ul class="dropdown-menu border-0 shadow-lg" aria-labelledby="aboutDropdown">
+                            <li><a class="dropdown-item py-2" href="about.html">Our Story</a></li>
+                            <li><a class="dropdown-item py-2" href="mission.html">Mission & Vision</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="resources.html">Resources</a></li>
+                    <li class="nav-item"><a class="nav-link" href="python-sandbox.html">Sandbox</a></li>
+                    <li class="nav-item"><a class="nav-link" href="career.html">Roadmaps</a></li>
+                    <li class="nav-item"><a class="nav-link" href="projects.html">Projects</a></li>
+                    <li class="nav-item"><a class="nav-link" href="community.html">Community</a></li>
+                    <li class="nav-item"><a class="nav-link" href="blog.html">Blog</a></li>
+                    <li class="nav-item"><a class="nav-link" href="certificate-verification.html">Verification</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+                </ul>
             </div>
         </div>
+    </nav>
 
-        <div class="category">
-            <h2 class="category-title">File Viewing & Editing</h2>
-            <div class="command-grid">
-                <div class="command-item" data-command="cat">
-                    <div class="command-header">
-                        <span class="command-code">cat</span>
-                        <div class="command-actions">
-                            <button class="btn copy-btn">Copy</button>
-                            <button class="btn info-btn">i</button>
-                        </div>
-                    </div>
-                    <div class="command-desc">Display file contents</div>
-                </div>
-
-                <div class="command-item" data-command="less">
-                    <div class="command-header">
-                        <span class="command-code">less</span>
-                        <div class="command-actions">
-                            <button class="btn copy-btn">Copy</button>
-                            <button class="btn info-btn">i</button>
-                        </div>
-                    </div>
-                    <div class="command-desc">View file page by page</div>
-                </div>
-
-                <div class="command-item" data-command="head">
-                    <div class="command-header">
-                        <span class="command-code">head</span>
-                        <div class="command-actions">
-                            <button class="btn copy-btn">Copy</button>
-                            <button class="btn info-btn">i</button>
-                        </div>
-                    </div>
-                    <div class="command-desc">Show first lines of file</div>
-                </div>
-
-                <div class="command-item" data-command="tail">
-                    <div class="command-header">
-                        <span class="command-code">tail</span>
-                        <div class="command-actions">
-                            <button class="btn copy-btn">Copy</button>
-                            <button class="btn info-btn">i</button>
-                        </div>
-                    </div>
-                    <div class="command-desc">Show last lines of file</div>
-                </div>
-
-                <div class="command-item" data-command="nano">
-                    <div class="command-header">
-                        <span class="command-code">nano</span>
-                        <div class="command-actions">
-                            <button class="btn copy-btn">Copy</button>
-                            <button class="btn info-btn">i</button>
-                        </div>
-                    </div>
-                    <div class="command-desc">Simple text editor</div>
-                </div>
-
-                <div class="command-item" data-command="grep">
-                    <div class="command-header">
-                        <span class="command-code">grep</span>
-                        <div class="command-actions">
-                            <button class="btn copy-btn">Copy</button>
-                            <button class="btn info-btn">i</button>
-                        </div>
-                    </div>
-                    <div class="command-desc">Search text in files</div>
+    <!-- Page Banner -->
+    <header class="page-banner" style="margin-top: 70px;">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div>
+                    <h1>Linux Command Cheat Sheet</h1>
+                    <p class="page-banner-sub">Essential commands and shortcuts for Linux administrators and developers. Click 'i' for details.</p>
                 </div>
             </div>
+            <ul class="breadcrumb-custom">
+                <li><a href="index.html">Home</a></li>
+                <li>Cheat Sheet</li>
+            </ul>
         </div>
+    </header>
 
-        <div class="category">
-            <h2 class="category-title">System Information</h2>
-            <div class="command-grid">
-                <div class="command-item" data-command="top">
-                    <div class="command-header">
-                        <span class="command-code">top</span>
-                        <div class="command-actions">
-                            <button class="btn copy-btn">Copy</button>
-                            <button class="btn info-btn">i</button>
-                        </div>
-                    </div>
-                    <div class="command-desc">Display system processes</div>
-                </div>
-
-                <div class="command-item" data-command="df">
-                    <div class="command-header">
-                        <span class="command-code">df</span>
-                        <div class="command-actions">
-                            <button class="btn copy-btn">Copy</button>
-                            <button class="btn info-btn">i</button>
-                        </div>
-                    </div>
-                    <div class="command-desc">Show disk space usage</div>
-                </div>
-
-                <div class="command-item" data-command="free">
-                    <div class="command-header">
-                        <span class="command-code">free</span>
-                        <div class="command-actions">
-                            <button class="btn copy-btn">Copy</button>
-                            <button class="btn info-btn">i</button>
-                        </div>
-                    </div>
-                    <div class="command-desc">Display memory usage</div>
-                </div>
-
-                <div class="command-item" data-command="uname">
-                    <div class="command-header">
-                        <span class="command-code">uname</span>
-                        <div class="command-actions">
-                            <button class="btn copy-btn">Copy</button>
-                            <button class="btn info-btn">i</button>
-                        </div>
-                    </div>
-                    <div class="command-desc">System information</div>
-                </div>
-            </div>
+    <!-- Main Content Section -->
+    <section class="py-5">
+        <div class="container" id="cheatSheetContainer">
+            <div class="row g-4" id="cheatSheetRow"></div>
         </div>
+    </section>
 
-        <div class="category">
-            <h2 class="category-title">Permissions & Ownership</h2>
-            <div class="command-grid">
-                <div class="command-item" data-command="chmod">
-                    <div class="command-header">
-                        <span class="command-code">chmod</span>
-                        <div class="command-actions">
-                            <button class="btn copy-btn">Copy</button>
-                            <button class="btn info-btn">i</button>
-                        </div>
-                    </div>
-                    <div class="command-desc">Change file permissions</div>
-                </div>
-
-                <div class="command-item" data-command="chown">
-                    <div class="command-header">
-                        <span class="command-code">chown</span>
-                        <div class="command-actions">
-                            <button class="btn copy-btn">Copy</button>
-                            <button class="btn info-btn">i</button>
-                        </div>
-                    </div>
-                    <div class="command-desc">Change file owner</div>
-                </div>
-
-                <div class="command-item" data-command="sudo">
-                    <div class="command-header">
-                        <span class="command-code">sudo</span>
-                        <div class="command-actions">
-                            <button class="btn copy-btn">Copy</button>
-                            <button class="btn info-btn">i</button>
-                        </div>
-                    </div>
-                    <div class="command-desc">Execute as superuser</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title" id="modalTitle"></h2>
-                <button class="close-btn">&times;</button>
+    <!-- Custom Modal -->
+    <div id="modal" class="modal-custom">
+        <div class="modal-content-custom">
+            <div class="modal-header-custom">
+                <h2 class="modal-title-custom" id="modalTitle"></h2>
+                <button class="close-btn-custom" id="closeBtn">&times;</button>
             </div>
             <div id="modalBody"></div>
         </div>
     </div>
-    <footer class="footer">
-        <h3>Happy Coding! 🚀</h3>
-        <p>Crafted with ❤️ by <strong>Chinthaparthi Sridhar</strong> for the goodness of the technical society.</p>
-        
-        <div class="footer-meta">
-            <p>Special thanks and credits to official Git documentation and other supporting resources.</p>
-            <p>© 2025 All rights reserved.</p>
+
+    <!-- Footer -->
+    <footer class="footer-custom">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <img src="image.png" alt="SilentCoderHub Footer Logo" class="footer-brand-img" loading="lazy">
+                    <p class="footer-tagline">Speak Less. Build More. A technology career development platform empowering programmers to build, verify, and excel.</p>
+                    <div class="footer-social-icons">
+                        <a href="https://instagram.com/silentcoderhub" target="_blank" rel="noopener" class="footer-social-icon" aria-label="SilentCoderHub Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="mailto:silentcoderhub@gmail.com" class="footer-social-icon" aria-label="Email SilentCoderHub"><i class="fas fa-envelope"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 col-sm-6">
+                    <h3 class="footer-title">Ecosystem</h3>
+                    <ul class="footer-links">
+                        <li><a href="about.html">Our Story</a></li>
+                        <li><a href="mission.html">Mission & Vision</a></li>
+                        <li><a href="resources.html">Resources</a></li>
+                        <li><a href="career.html">Roadmaps</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6 col-sm-6">
+                    <h3 class="footer-title">Practice</h3>
+                    <ul class="footer-links">
+                        <li><a href="projects.html">Showcase Projects</a></li>
+                        <li><a href="community.html">Community Portal</a></li>
+                        <li><a href="blog.html">Technical Blog</a></li>
+                        <li><a href="certificate-verification.html">Verification</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <h3 class="footer-title">Platform Scope</h3>
+                    <p class="footer-tagline" style="font-size: 0.85rem;">Online technology learning community dedicated to helping developers structure skills, manage GitHub outputs, optimize resume ATS benchmarks, and mock interview preparations.</p>
+                    <div class="footer-contact-info mt-2">
+                        <p class="mb-1"><i class="fas fa-envelope"></i> silentcoderhub@gmail.com</p>
+                        <p class="mb-0"><i class="fas fa-map-marker-alt"></i> Online Platform (Global)</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+                <p class="mb-0">© 2026 SilentCoderHub. All Rights Reserved.</p>
+                <div class="d-flex gap-3">
+                    <a href="privacy-policy.html" class="text-muted small">Privacy Policy</a>
+                    <a href="terms-and-conditions.html" class="text-muted small">Terms & Conditions</a>
+                    <a href="disclaimer.html" class="text-muted small">Disclaimer</a>
+                </div>
+            </div>
         </div>
     </footer>
 
+    <!-- Back to Top Button -->
+    <button id="back-to-top" class="back-to-top" aria-label="Back to top" title="Back to top">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <!-- Bootstrap Bundle CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Standalone Compiled JS Block -->
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Initialize Theme Switcher (Dark/Light mode)
+            const initTheme = () => {
+                const themeToggleBtn = document.getElementById('theme-toggle');
+                if (!themeToggleBtn) return;
+
+                const currentTheme = localStorage.getItem('theme') || 'light';
+                document.documentElement.setAttribute('data-theme', currentTheme);
+                
+                themeToggleBtn.addEventListener('click', () => {
+                    const theme = document.documentElement.getAttribute('data-theme');
+                    let newTheme = 'light';
+                    if (theme === 'light') {
+                        newTheme = 'dark';
+                    }
+                    
+                    document.documentElement.setAttribute('data-theme', newTheme);
+                    localStorage.setItem('theme', newTheme);
+                });
+            };
+
+            // 2. Sticky Navbar scroll handler
+            const initStickyNavbar = () => {
+                const navbar = document.querySelector('.navbar-custom');
+                if (!navbar) return;
+
+                const handleScroll = () => {
+                    if (window.scrollY > 50) {
+                        navbar.classList.add('navbar-scrolled');
+                    } else {
+                        navbar.classList.remove('navbar-scrolled');
+                    }
+                };
+
+                window.addEventListener('scroll', handleScroll);
+                handleScroll();
+            };
+
+            // 3. Scroll Progress Indicator & Back to Top visibility
+            const initScrollProgressAndBackToTop = () => {
+                const progressIndicator = document.getElementById('scroll-progress');
+                const backToTopBtn = document.getElementById('back-to-top');
+
+                const handleProgress = () => {
+                    const windowHeight = document.documentElement.scrollHeight - window.innerHeight;
+                    if (windowHeight > 0) {
+                        const scrolledPercent = (window.scrollY / windowHeight) * 100;
+                        if (progressIndicator) {
+                            progressIndicator.style.width = scrolledPercent + '%';
+                        }
+                    }
+
+                    if (backToTopBtn) {
+                        if (window.scrollY > 300) {
+                            backToTopBtn.classList.add('active');
+                        } else {
+                            backToTopBtn.classList.remove('active');
+                        }
+                    }
+                };
+
+                window.addEventListener('scroll', handleProgress);
+                handleProgress();
+
+                if (backToTopBtn) {
+                    backToTopBtn.addEventListener('click', () => {
+                        window.scrollTo({
+                            top: 0,
+                            behavior: 'smooth'
+                        });
+                    });
+                }
+            };
+
+            // 4. Close mobile navbar collapse on link click
+            const initMobileMenuAutoClose = () => {
+                const navLinks = document.querySelectorAll('.navbar-nav .nav-link:not(.dropdown-toggle)');
+                const navbarCollapse = document.getElementById('navbarNav');
+                if (!navbarCollapse) return;
+
+                navLinks.forEach(link => {
+                    link.addEventListener('click', () => {
+                        if (window.innerWidth < 992) {
+                            const bsCollapse = new bootstrap.Collapse(navbarCollapse, { toggle: false });
+                            bsCollapse.hide();
+                        }
+                    });
+                });
+            };
+
+            // Run Core Page Interactions
+            initTheme();
+            initStickyNavbar();
+            initScrollProgressAndBackToTop();
+            initMobileMenuAutoClose();
+        });
+
         // ✅ Your full database here — unchanged
         const commands = [
             // File System Commands
@@ -668,7 +1053,6 @@
             { category: 'permission', command: 'chgrp', description: 'Change group', syntax: 'chgrp [options] group file', examples: ['chgrp users file.txt', 'chgrp -R group /path/'], info: 'Changes file group ownership. -R for recursive.' },
             { category: 'permission', command: 'umask', description: 'Set default permissions', syntax: 'umask [mode]', examples: ['umask', 'umask 022'], info: 'Sets default file permissions for new files.' }
         ];
-        const container = document.querySelector(".container");
 
         // ✅ Category Display Names
         const categoryNames = {
@@ -687,7 +1071,7 @@
         commands.forEach(cmd => {
             commandInfo[cmd.command] = {
                 description: cmd.description,
-                usage: [cmd.syntax],   // usage section shows syntax
+                usage: [cmd.syntax],
                 examples: cmd.examples,
                 info: cmd.info
             };
@@ -700,47 +1084,51 @@
             grouped[cmd.category].push(cmd);
         });
 
-        // ✅ Clear existing static cheat sheet
-        document.querySelectorAll(".category").forEach(e => e.remove());
-
         // ✅ Build cheat sheet UI dynamically
-        Object.keys(grouped).forEach(category => {
-            const section = document.createElement("div");
-            section.className = "category";
+        const csRow = document.getElementById("cheatSheetRow");
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            Object.keys(grouped).forEach((category) => {
+                const col = document.createElement("div");
+                col.className = "col-12";
 
-            section.innerHTML = `
-                <h2 class="category-title">${categoryNames[category] || category}</h2>
-                <div class="command-grid">
-                    ${grouped[category].map(cmd => `
-                        <div class="command-item" data-command="${cmd.command}">
-                            <div class="command-header">
-                                <span class="command-code">${cmd.command}</span>
-                                <div class="command-actions">
-                                    <button class="btn copy-btn">Copy</button>
-                                    <button class="btn info-btn">i</button>
+                col.innerHTML = `
+                    <div class="category">
+                        <h2 class="category-title">${categoryNames[category] || category}</h2>
+                        <div class="command-grid">
+                            ${grouped[category].map(cmd => `
+                                <div class="command-item" data-command="${cmd.command}">
+                                    <div class="command-header">
+                                        <span class="command-code">${escHtml(cmd.command)}</span>
+                                        <div class="command-actions">
+                                            <button class="btn-action copy-btn">Copy</button>
+                                            <button class="btn-info-action info-btn" aria-label="More info for ${escHtml(cmd.command)}"><i class="fas fa-info"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="command-desc">${escHtml(cmd.description)}</div>
                                 </div>
-                            </div>
-                            <div class="command-desc">${cmd.description}</div>
+                            `).join("")}
                         </div>
-                    `).join("")}
-                </div>
-            `;
+                    </div>
+                `;
 
-            container.appendChild(section);
+                csRow.appendChild(col);
+            });
         });
 
         // ✅ Copy button
         document.addEventListener("click", e => {
-            if (!e.target.classList.contains("copy-btn")) return;
-            const box = e.target.closest(".command-item");
+            const copyBtn = e.target.closest(".copy-btn");
+            if (!copyBtn) return;
+            const box = copyBtn.closest(".command-item");
             const cmd = box.dataset.command;
 
             navigator.clipboard.writeText(cmd).then(() => {
-                e.target.textContent = "Copied!";
-                e.target.classList.add("copied");
+                copyBtn.textContent = "Copied!";
+                copyBtn.classList.add("copied");
                 setTimeout(() => {
-                    e.target.textContent = "Copy";
-                    e.target.classList.remove("copied");
+                    copyBtn.textContent = "Copy";
+                    copyBtn.classList.remove("copied");
                 }, 2000);
             });
         });
@@ -749,46 +1137,62 @@
         const modal = document.getElementById("modal");
         const modalTitle = document.getElementById("modalTitle");
         const modalBody = document.getElementById("modalBody");
-        const closeBtn = document.querySelector(".close-btn");
+        const closeBtn = document.getElementById("closeBtn");
 
         document.addEventListener("click", e => {
-            if (!e.target.classList.contains("info-btn")) return;
+            const infoBtn = e.target.closest(".info-btn");
+            if (!infoBtn) return;
 
-            const box = e.target.closest(".command-item");
+            const box = infoBtn.closest(".command-item");
             const cmd = box.dataset.command;
             const info = commandInfo[cmd];
 
             modalTitle.textContent = cmd;
 
             modalBody.innerHTML = `
-                <div class="modal-section">
+                <div class="modal-section-custom">
                     <h3>Description</h3>
-                    <p>${info.description}</p>
+                    <p>${escHtml(info.description)}</p>
                 </div>
 
-                <div class="modal-section">
+                <div class="modal-section-custom">
                     <h3>Syntax</h3>
-                    <div class="usage-example">${info.usage[0]}</div>
+                    <div class="usage-example-custom">${escHtml(info.usage[0])}</div>
                 </div>
 
-                <div class="modal-section">
+                <div class="modal-section-custom">
                     <h3>Examples</h3>
-                    ${info.examples.map(ex => `<div class="usage-example">${ex}</div>`).join("")}
+                    ${info.examples.map(ex => `<div class="usage-example-custom">${escHtml(ex)}</div>`).join("")}
                 </div>
 
-                <div class="modal-section">
+                <div class="modal-section-custom">
                     <h3>Additional Info</h3>
-                    <p>${info.info}</p>
+                    <p>${escHtml(info.info)}</p>
                 </div>
             `;
 
             modal.classList.add("active");
+            document.body.style.overflow = "hidden"; // Disable scroll when modal is active
         });
 
-        closeBtn.addEventListener("click", () => modal.classList.remove("active"));
-        modal.addEventListener("click", e => { if (e.target === modal) modal.classList.remove("active"); });
-        document.addEventListener("keydown", e => { if (e.key === "Escape") modal.classList.remove("active"); });
-    </script>
+        const closeModal = () => {
+            modal.classList.remove("active");
+            document.body.style.overflow = ""; // Re-enable scroll
+        };
 
+        closeBtn.addEventListener("click", closeModal);
+        modal.addEventListener("click", e => { if (e.target === modal) closeModal(); });
+        document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
+
+        // Escape HTML function
+        function escHtml(str) {
+            return str
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
 </body>
 </html>
